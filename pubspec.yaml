@@ -1,5 +1,5 @@
 name: order_approval
-description: A new Flutter project.
+description: App with the goal to ease the order approvals on restaurants that use the elomind e-commerce platform.
 publish_to: 'none'
 
 version: 1.0.0+1

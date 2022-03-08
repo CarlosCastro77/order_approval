@@ -63,7 +63,7 @@ void main() {
     sut = FirebaseAuthentication(firebaseAuth: firebaseAuth);
   });
 
-  test('Should call sign in with correct email and secret', () async {
+  test('Should call sign in with correct email and password', () async {
     await sut.auth(
       email: fakeEmail,
       secret: fakeSecret
