@@ -1,1 +1,1 @@
-export './firebase_authentication.dart';
+export './authentication/authentication.dart';

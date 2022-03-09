@@ -1,1 +1,1 @@
-export './authentication.dart';
+export './email_authentication.dart';

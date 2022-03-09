@@ -1,14 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../domain/helpers/helpers.dart';
+import '../../../domain/helpers/helpers.dart';
+import '../../../domain/usecases/usecases.dart';
 
-class FirebaseAuthentication {
+class FirebaseEmailAuthentication implements EmailAuthentication {
   final FirebaseAuth firebaseAuth;
 
-  FirebaseAuthentication({
+  FirebaseEmailAuthentication({
     required this.firebaseAuth
   });
 
+  @override
   Future<void> auth({
     required String email, 
     required String secret

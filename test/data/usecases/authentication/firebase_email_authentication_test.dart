@@ -33,7 +33,7 @@ void main() {
   late String fakeSecret;
   late UserCredentialsFake fakeUserCredentials;
 
-  late FirebaseAuthentication sut;
+  late FirebaseEmailAuthentication sut;
 
   setUp(() {
     // spy
@@ -47,7 +47,7 @@ void main() {
     // mocks
     firebaseAuth.mockSignIn(fakeUserCredentials);
 
-    sut = FirebaseAuthentication(firebaseAuth: firebaseAuth);
+    sut = FirebaseEmailAuthentication(firebaseAuth: firebaseAuth);
   });
 
   test('Should call sign in with correct email and password', () async {
