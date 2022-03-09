@@ -95,4 +95,15 @@ void main() {
 
     expect(auth, throwsA(DomainError.invalidCredentials));
   });
+
+  test('Should throw invalid credentials error if password is invalid', () {
+    firebaseAuth.mockSignInError(FirebaseAuthException(code: 'wrong-password'));
+
+    final auth = sut.auth(
+      email: fakeEmail,
+      secret: fakeSecret
+    );
+
+    expect(auth, throwsA(DomainError.invalidCredentials));
+  });
 }
