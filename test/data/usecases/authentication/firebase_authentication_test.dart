@@ -4,31 +4,8 @@ import 'package:faker/faker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mocktail/mocktail.dart';
 
-enum DomainError {
-  invalidCredentials
-}
-
-class FirebaseAuthentication {
-  final FirebaseAuth firebaseAuth;
-
-  FirebaseAuthentication({
-    required this.firebaseAuth
-  });
-
-  Future<void> auth({
-    required String email, 
-    required String secret
-  }) async {
-    try {
-      await firebaseAuth.signInWithEmailAndPassword(
-        email: email, 
-        password: secret
-      );
-    } on FirebaseAuthException {
-      throw DomainError.invalidCredentials;
-    }
-  }
-}
+import 'package:order_approval/data/usecases/usecases.dart';
+import 'package:order_approval/domain/helpers/helpers.dart';
 
 class FirebaseAuthSpy extends Mock implements FirebaseAuth {
   When mockSignInCall() => 
