@@ -4,6 +4,10 @@ import 'package:faker/faker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mocktail/mocktail.dart';
 
+enum DomainError {
+  invalidCredentials
+}
+
 class FirebaseAuthentication {
   final FirebaseAuth firebaseAuth;
 
@@ -15,10 +19,14 @@ class FirebaseAuthentication {
     required String email, 
     required String secret
   }) async {
-    await firebaseAuth.signInWithEmailAndPassword(
-      email: email, 
-      password: secret
-    );
+    try {
+      await firebaseAuth.signInWithEmailAndPassword(
+        email: email, 
+        password: secret
+      );
+    } on FirebaseAuthException {
+      throw DomainError.invalidCredentials;
+    }
   }
 }
 
@@ -33,6 +41,8 @@ class FirebaseAuthSpy extends Mock implements FirebaseAuth {
   
   void mockSignIn(UserCredential userCredential) => 
     mockSignInCall().thenAnswer((_) async => userCredential);
+
+  void mockSignInError(FirebaseAuthException error) => mockSignInCall().thenThrow(error);
 }
 
 class UserCredentialsFake extends Fake implements UserCredential {}
@@ -73,5 +83,16 @@ void main() {
       email: fakeEmail, 
       password: fakeSecret
     ));
+  });
+
+  test('Should throw invalid credentials error if email is invalid', () {
+    firebaseAuth.mockSignInError(FirebaseAuthException(code: 'invalid-email'));
+
+    final auth = sut.auth(
+      email: fakeEmail,
+      secret: fakeSecret
+    );
+
+    expect(auth, throwsA(DomainError.invalidCredentials));
   });
 }
