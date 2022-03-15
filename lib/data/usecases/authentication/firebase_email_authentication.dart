@@ -12,7 +12,7 @@ class FirebaseEmailAuthentication implements EmailAuthentication {
 
   @override
   Future<void> auth({
-    required String email, 
+    required String email,
     required String secret
   }) async {
     try {
