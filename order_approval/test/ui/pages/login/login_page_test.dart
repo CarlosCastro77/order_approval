@@ -20,19 +20,24 @@ extension UIErrorExtension on UIError {
 
 abstract class LoginPresenter implements Listenable {
   Stream<UIError?> get emailErrorStream;
+  Stream<UIError?> get passwordErrorStream;
 }
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {
   final emailErrorController = StreamController<UIError?>();
+  final passwordErrorController = StreamController<UIError?>();
 
   LoginPresenterSpy() {
     when(() => emailErrorStream).thenAnswer((_) => emailErrorController.stream);
+    when(() => passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
   }
 
   void emitEmailError(UIError error) => emailErrorController.add(error);
+  void emitPasswordError(UIError error) => passwordErrorController.add(error);
 
   void dispose() {
     emailErrorController.close();
+    passwordErrorController.close();
   }
 }
 
@@ -58,10 +63,16 @@ class LoginPage extends StatelessWidget {
                 );
               }
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                label: Text('Senha')
-              )
+            StreamBuilder<UIError?>(
+              stream: presenter.passwordErrorStream,
+              builder: (context, snapshot) {
+                return TextFormField(
+                  decoration: InputDecoration(
+                    label: const Text('Senha'),
+                    errorText: snapshot.data?.description
+                  )
+                );
+              }
             ),
             ElevatedButton(
               onPressed: () {}, 
@@ -104,6 +115,15 @@ void main() {
     await loadPage(tester);
 
     presenter.emitEmailError(UIError.invalidField);
+    await tester.pump();
+
+    expect(find.text('Campo inválido'), findsOneWidget);
+  });
+
+  testWidgets('Should present error if password is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordError(UIError.invalidField);
     await tester.pump();
 
     expect(find.text('Campo inválido'), findsOneWidget);
