@@ -40,6 +40,7 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {
   void emitPasswordError(UIError error) => passwordErrorController.add(error);
   void emitPasswordValid() => passwordErrorController.add(null);
   void emitFormValid() => isFormValidController.add(true);
+  void emitFormInvalid() => isFormValidController.add(false);
 
   void dispose() {
     emailErrorController.close();
@@ -193,5 +194,15 @@ void main() {
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNotNull);
+  });
+
+  testWidgets('Should disable button if form is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormInvalid();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNull);
   }); 
 }
