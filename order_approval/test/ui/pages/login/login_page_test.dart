@@ -21,25 +21,30 @@ extension UIErrorExtension on UIError {
 abstract class LoginPresenter implements Listenable {
   Stream<UIError?> get emailErrorStream;
   Stream<UIError?> get passwordErrorStream;
+  Stream<bool> get isFormValidStream;
 }
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {
   final emailErrorController = StreamController<UIError?>();
   final passwordErrorController = StreamController<UIError?>();
+  final isFormValidController = StreamController<bool>();
 
   LoginPresenterSpy() {
     when(() => emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(() => passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
+    when(() => isFormValidStream).thenAnswer((_) => isFormValidController.stream);
   }
 
   void emitEmailError(UIError error) => emailErrorController.add(error);
   void emitEmailValid() => emailErrorController.add(null);
   void emitPasswordError(UIError error) => passwordErrorController.add(error);
   void emitPasswordValid() => passwordErrorController.add(null);
+  void emitFormValid() => isFormValidController.add(true);
 
   void dispose() {
     emailErrorController.close();
     passwordErrorController.close();
+    isFormValidController.close();
   }
 }
 
@@ -76,9 +81,16 @@ class LoginPage extends StatelessWidget {
                 );
               }
             ),
-            ElevatedButton(
-              onPressed: () {}, 
-              child: const Text('Entrar')
+            StreamBuilder<bool>(
+              stream: presenter.isFormValidStream,
+              builder: (context, snapshot) {
+                return ElevatedButton(
+                  onPressed: snapshot.data == true 
+                    ? () {} 
+                    : null, 
+                  child: const Text('Entrar')
+                );
+              }
             ),
             TextButton(
               onPressed: () {}, 
@@ -172,4 +184,14 @@ void main() {
       findsOneWidget
     );
   });
+
+  testWidgets('Should enable button if form is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormValid();
+    await tester.pump();
+
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.onPressed, isNotNull);
+  }); 
 }
