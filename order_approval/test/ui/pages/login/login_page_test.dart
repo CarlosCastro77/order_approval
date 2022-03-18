@@ -35,6 +35,7 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {
   void emitEmailError(UIError error) => emailErrorController.add(error);
   void emitEmailValid() => emailErrorController.add(null);
   void emitPasswordError(UIError error) => passwordErrorController.add(error);
+  void emitPasswordValid() => passwordErrorController.add(null);
 
   void dispose() {
     emailErrorController.close();
@@ -130,7 +131,7 @@ void main() {
     expect(find.text('Campo obrigatório'), findsOneWidget);
   });
 
-  testWidgets('Should present no error if email is valid', (WidgetTester tester) async {
+  testWidgets('Should not presenter error if email is valid', (WidgetTester tester) async {
     await loadPage(tester);
 
     presenter.emitEmailValid();
@@ -158,5 +159,17 @@ void main() {
     await tester.pump();
 
     expect(find.text('Campo obrigatório'), findsOneWidget);
+  });
+
+  testWidgets('Should not presenter error if password is valid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordValid();
+    await tester.pump();
+
+    expect(
+      find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text)),
+      findsOneWidget
+    );
   });
 }
