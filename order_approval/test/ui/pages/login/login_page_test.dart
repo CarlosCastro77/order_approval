@@ -137,4 +137,13 @@ void main() {
 
     expect(find.text('Campo inválido'), findsOneWidget);
   });
+
+  testWidgets('Should present error if password is empty', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitPasswordError(UIError.requiredField);
+    await tester.pump();
+
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+  });
 }
