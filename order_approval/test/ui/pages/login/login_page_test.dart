@@ -22,6 +22,8 @@ abstract class LoginPresenter implements Listenable {
   Stream<UIError?> get emailErrorStream;
   Stream<UIError?> get passwordErrorStream;
   Stream<bool> get isFormValidStream;
+
+  void authenticate();
 }
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {
@@ -87,7 +89,7 @@ class LoginPage extends StatelessWidget {
               builder: (context, snapshot) {
                 return ElevatedButton(
                   onPressed: snapshot.data == true 
-                    ? () {} 
+                    ? presenter.authenticate
                     : null, 
                   child: const Text('Entrar')
                 );
@@ -204,5 +206,18 @@ void main() {
 
     final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNull);
-  }); 
+  });
+
+  testWidgets('Should call authenticate on form submit', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    presenter.emitFormValid();
+    await tester.pump();
+
+    final Finder button = find.byType(ElevatedButton);
+    await tester.ensureVisible(button);
+
+    await tester.tap(button);
+    verify(() => presenter.authenticate()).called(1);
+  });
 }
