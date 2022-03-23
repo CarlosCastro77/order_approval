@@ -24,6 +24,7 @@ abstract class LoginPresenter implements Listenable {
   Stream<bool> get isFormValidStream;
 
   void authenticate();
+  void forgotPassword();
 }
 
 class LoginPresenterSpy extends Mock implements LoginPresenter {
@@ -96,7 +97,7 @@ class LoginPage extends StatelessWidget {
               }
             ),
             TextButton(
-              onPressed: () {}, 
+              onPressed: presenter.forgotPassword, 
               child: const Text('Esqueceu sua senha?')
             )
           ],
@@ -219,5 +220,15 @@ void main() {
 
     await tester.tap(button);
     verify(() => presenter.authenticate()).called(1);
+  });
+
+  testWidgets('Should call forgotPassword on forgot password button click', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final Finder button = find.byType(TextButton);
+    await tester.ensureVisible(button);
+
+    await tester.tap(button);
+    verify(() => presenter.forgotPassword()).called(1);
   });
 }
