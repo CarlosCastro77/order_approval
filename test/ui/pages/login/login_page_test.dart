@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:order_approval/ui/helpers/helpers.dart';
@@ -28,6 +29,18 @@ void main() {
     expect(find.text('Senha'), findsOneWidget);
     expect(find.text('Entrar'), findsOneWidget);
     expect(find.text('Esqueceu sua senha?'), findsOneWidget);
+  });
+
+  testWidgets('Should call validate with correct values on input change', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    final String email = faker.internet.email();
+    await tester.enterText(find.bySemanticsLabel('Email'), email);
+    verify(() => presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+    await tester.enterText(find.bySemanticsLabel('Senha'), password);
+    verify(() => presenter.validatePassword(password));
   });
 
   testWidgets('Should present error if email is invalid', (WidgetTester tester) async {

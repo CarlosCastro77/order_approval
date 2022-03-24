@@ -21,7 +21,8 @@ class LoginPage extends StatelessWidget {
                   decoration: InputDecoration(
                     label: const Text('Email'),
                     errorText: snapshot.data?.description
-                  )
+                  ),
+                  onChanged: presenter.validateEmail,
                 );
               }
             ),
@@ -32,7 +33,8 @@ class LoginPage extends StatelessWidget {
                   decoration: InputDecoration(
                     label: const Text('Senha'),
                     errorText: snapshot.data?.description
-                  )
+                  ),
+                  onChanged: presenter.validatePassword,
                 );
               }
             ),
