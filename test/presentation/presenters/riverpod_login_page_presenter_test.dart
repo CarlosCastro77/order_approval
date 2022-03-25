@@ -25,11 +25,17 @@ abstract class Validation {
 class ValidationSpy extends Mock implements Validation {}
 
 void main() {
-  test('Should call Validation with correct email', () async {
-    final Validation validation = ValidationSpy();
-    final RiverpodLoginPagePresenter sut = RiverpodLoginPagePresenter(validation: validation);
-    final String fakeEmail = faker.internet.email();
+  late Validation validation;
+  late RiverpodLoginPagePresenter sut;
+  late String fakeEmail;
 
+  setUp(() {
+    fakeEmail = faker.internet.email();
+    sut = RiverpodLoginPagePresenter(validation: validation);
+    validation = ValidationSpy();
+  });
+
+  test('Should call Validation with correct email', () async {
     sut.validateEmail(fakeEmail);
 
     verify(() => validation.validate(field: 'email', value: fakeEmail)).called(1);
